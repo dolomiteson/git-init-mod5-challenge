@@ -13,6 +13,11 @@ function currentDateTime (){
 }
 
 // TODO: Function to disable text Area and Button for past items 
+function disable(element){
+    element.classList.add("bg-light");
+    element.getElementsByTagName("textarea")[0].readOnly = "true";
+    element.getElementsByTagName("button")[0].disabled = true;
+}
 
 // Function to change timeblocks color in relation to current hour
 function whatColor(){
@@ -20,7 +25,7 @@ function whatColor(){
      
     for(var index = 0; index < timeBlockArr.length; index++){
         if(parseInt(timeBlockArr[index].id) < hour){
-            timeBlockArr[index].classList.add("bg-light");
+            disable(timeBlockArr[index]);
         }
         else if(parseInt(timeBlockArr[index].id) === hour){
             timeBlockArr[index].classList.add("bg-danger");
