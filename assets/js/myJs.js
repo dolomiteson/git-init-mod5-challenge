@@ -1,18 +1,24 @@
+/* Constants */
+const TASK_STORE = 'taskStore'
 
-/* Date/Time Funtionality */
+/*Variables */
 var dateTime = ""; 
 var date = "";
+var day = "";
 var hour = "";
 
-// Function that gets the most current date
-function currentDateTime (){
+/* Date/Time Funtionality */
+// Function that tasks any changes to the page when called 
+function imTasking (){
     date = moment(new Date());
     dateTime.html(date.format('MMMM Do YYYY, h:mm:ss a'));
+    day = parseInt(date.format('D'));
     hour = parseInt(date.format('H'));
     whatColor();
+    dataBegone();
 }
 
-// TODO: Function to disable text Area and Button for past items 
+// Function to disable text Area and Button for past items 
 function disable(element){
     element.classList.add("bg-light");
     element.getElementsByTagName("textarea")[0].readOnly = "true";
@@ -34,11 +40,24 @@ function whatColor(){
     }
 }
 
-// Function that  maintains accurate date and time in the heasder
+/* Inputs/Storage Functionality */
+// Function to Clear local storage is day has passed
+function dataBegone(){
+    var storage = localStorage.getItem(TASK_STORE);
+    var tasks = JSON.parse(localStorage.getItem(storage)) ?? [];
+    console.log(tasks);
+    if(tasks.length === 0 || tasks[0].dayVal < day){
+        localStorage.clear();
+    }
+}
+
+/* Main */
+// Runs every second updating page
 $(document).ready(function(){
     dateTime = $("#displayMoment");
-    currentDateTime();
-    setInterval(currentDateTime , 1000);
+    imTasking();
+    setInterval(imTasking , 1000);
 });
+
  
 
