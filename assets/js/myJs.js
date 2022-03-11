@@ -1,5 +1,6 @@
 /* Constants */
 const TASK_STORE = 'taskStore'
+const TIME_BLOCK_ARR = $(".container").children();
 
 /*Variables */
 var dateTime = ""; 
@@ -27,31 +28,64 @@ function disable(element){
 
 // Function to change timeblocks color in relation to current hour
 function whatColor(){
-     var timeBlockArr = $(".container").children();
      
-    for(var index = 0; index < timeBlockArr.length; index++){
-        if(parseInt(timeBlockArr[index].id) < hour){
-            disable(timeBlockArr[index]);
+    for(var index = 0; index < TIME_BLOCK_ARR.length; index++){
+        if(parseInt(TIME_BLOCK_ARR[index].id) < hour){
+            disable(TIME_BLOCK_ARR[index]);
         }
-        else if(parseInt(timeBlockArr[index].id) === hour){
-            timeBlockArr[index].classList.add("bg-danger");
+        else if(parseInt(TIME_BLOCK_ARR[index].id) === hour){
+            TIME_BLOCK_ARR[index].classList.add("bg-danger");
         }
-        else{timeBlockArr[index].classList.add("bg-success");}
+        else{TIME_BLOCK_ARR[index].classList.add("bg-success");}
     }
 }
 
 /* Inputs/Storage Functionality */
+// Function to save tasks
+function saveTask(element){
+    var tasks = JSON.parse(localStorage.getItem(TASK_STORE)) ?? [];
+    var hourVal = parseInt($(element).parent().attr("id"));
+    var inputVal = $(element).prev().val();
+
+    // Remove any old records to be replaced
+    for(var index = 0; index < tasks.length; index++){
+        if(tasks[index].hourVal === hourVal){
+            tasks.splice(index, 1);
+        }
+    }
+
+    tasks.push({day, hourVal, inputVal});
+
+    tasks.sort((a,b) => a.hourVal - b.hourVal);
+
+    // Set local storage
+    localStorage.setItem(TASK_STORE, JSON.stringify(tasks));
+
+    dataShow();
+}
+
 // Function to Clear local storage is day has passed
 function dataBegone(){
-    var storage = localStorage.getItem(TASK_STORE);
-    var tasks = JSON.parse(localStorage.getItem(storage)) ?? [];
-    console.log(tasks);
-    if(tasks.length === 0 || tasks[0].dayVal < day){
+    var tasks = JSON.parse(localStorage.getItem(TASK_STORE)) ?? [];
+    if(tasks.length === 0 || tasks[0].day < day){
         localStorage.clear();
+        dataShow();
     }
 }
 
+// Function to display data based on local storage
+function dataShow(){
+    var tasks = JSON.parse(localStorage.getItem(TASK_STORE)) ?? [];
+
+    for(var index = 0; index < tasks.length; index++){
+        var idNum = tasks[index].hourVal;
+        $('#' + idNum).children(".description").html(tasks[index].inputVal);
+    } 
+} 
+
 /* Main */
+// Display Data
+dataShow();
 // Runs every second updating page
 $(document).ready(function(){
     dateTime = $("#displayMoment");
